@@ -1,3 +1,2 @@
-# NYU_Capstone
-# DS-GA1011
-# DS-GA1011
+# NYU Capstone - Data Crushers
+# Question Generation for Earning Calls
