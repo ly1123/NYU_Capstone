@@ -86,5 +86,17 @@ def unigramPlots(path_count, path_tfidf, var, max_words):
     freqPlots(path_count, freq_dict)
     tfidfPlots(path_tfidf, tf_dict, max_words)
     return "Success!"
+
+#################################################################################
+###################################VIZ TAGS BY ANALYST###########################
+#################################################################################
+for a, a_d in df.groupby("AnalystName"):
+    d_p = a_d.groupby("EarningTag2").size().reset_index(name="Counts")
+    fig = plt.figure(figsize=(25,6))
+    fig_plt = sns.barplot(x=d_p['EarningTag2'], y=d_p['Counts']/d_p['Counts'].sum()).get_figure()
+    plt.xlabel("Earning Tag")
+    plt.ylabel("Count")
+    plt.title('Earning Tag Distribution - {}'.format(a))
+    fig_plt.savefig("Visualizations/Analyst_ETag2/{}.png".format(a))
     
 
