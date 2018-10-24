@@ -90,6 +90,7 @@ def unigramPlots(path_count, path_tfidf, var, max_words):
 #################################################################################
 ###################################VIZ TAGS BY ANALYST###########################
 #################################################################################
+
 for a, a_d in df.groupby("AnalystName"):
     d_p = a_d.groupby("EarningTag2").size().reset_index(name="Counts")
     fig = plt.figure(figsize=(25,6))
@@ -99,4 +100,43 @@ for a, a_d in df.groupby("AnalystName"):
     plt.title('Earning Tag Distribution - {}'.format(a))
     fig_plt.savefig("Visualizations/Analyst_ETag2/{}.png".format(a))
     
+#################################################################################
+###################################VIZ Words By Analyst and Tag##################
+#################################################################################
+    
+def analystTagTfidfPlot():
+
+    groups = df.groupby(['AnalystName', "EarningTag2"])
+
+    freq_dict = {}
+    tf_dict = {}
+
+    for j,i in groups:
+        words = ' '.join(cleanText(i["Question"])).split()
+        usage = Counter(words)
+        tf_dict[j] = {u:usage[u]/np.log2(1 + usage[u]) for u in usage}
+
+    tfidf_dict = {}
+
+    for doc, usage in tf_dict.items():
+        tfidf_dict[doc] = {}
+        total_docs = 0
+        for word, value in usage.items():
+            for doc2, usage2 in tf_dict.items():
+                if doc2[1] == doc[1]:
+                    if word in usage2:
+                        total_docs += 1
+            tfidf_dict[doc][word] = value*np.log2(1 + len(tf_dict)/total_docs) 
+
+
+    for tag, usage in tfidf_dict.items():
+        word_values = sorted(usage.items(), key=lambda kv: -kv[1])[:10]
+        words = [wv[0] for wv in word_values]
+        values = [wv[1] for wv in word_values]
+        fig = plt.figure(figsize=(12,6))
+        fig_plt = sns.barplot(x=words, y=values).get_figure()
+        plt.xlabel("Word")
+        plt.ylabel("TF-IDF Score")
+        plt.title('TF-IDF Top 10 - {}-{}'.format(tag[0], tag[1]))
+        fig_plt.savefig("{}/{}_{}.png".format('Visualizations/Analyst_Tag2_tfidf', tag[0],tag[1]))
 
