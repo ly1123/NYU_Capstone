@@ -30,7 +30,7 @@ def cleanText(col):
         text = text.replace('’', '').replace('\'', "").replace(".", "").replace("-", "").replace("...","")
         doc = nlp(text, disable=['parser', 'ner'])
         tokens = [tok.lemma_.lower().strip() for tok in doc if tok.lemma_ != '-PRON-']
-        tokens = [tok for tok in tokens if tok not in stopwords and tok not in punctuations]
+        tokens = [tok for tok in tokens if tok not in stopwords and tok not in punctuations and tok not in ("hi", "-", "thank")]
         tokens = ' '.join(tokens)
         
         texts.append(tokens)
@@ -140,3 +140,5 @@ def analystTagTfidfPlot():
         plt.title('TF-IDF Top 10 - {}-{}'.format(tag[0], tag[1]))
         fig_plt.savefig("{}/{}_{}.png".format('Visualizations/Analyst_Tag2_tfidf', tag[0],tag[1]))
 
+
+analystTagTfidfPlot()
